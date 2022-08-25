@@ -12,7 +12,7 @@ router.post('/', function (req, res, next) {
                 email: 'tungnt@softech.vn',
                 username: 'tungnt',
                 firstName: 'Tony',
-                lastName: 'Woo',
+                lastName: 'woo',
                 isActive: true,
             },
             access_token: '...',
