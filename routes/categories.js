@@ -1,5 +1,9 @@
+const { json } = require('express');
 var express = require('express');
+const fs = require('fs');
 var router = express.Router();
+
+const fileName = 'data.json';
 const data = [
     {
         id: 1,
@@ -19,7 +23,11 @@ const data = [
 ];
 /* GET users listing. */
 router.get('/', function (req, res) {
-    res.json(data);
+    try {
+        res.json(data);
+    } catch (error) {
+        res.sendStatus(error);
+    }
 });
 // GET WITH PARAMS
 router.get('/:id', (req, res) => {
@@ -42,6 +50,7 @@ router.post('/', (req, res) => {
     };
     if (req.body.name && req.body.description) {
         data.push(newCategory);
+        fs.appendFile(fileName, JSON.parse(newCategory));
         console.log(data);
         res.status(201).json({
             statusCode: 201,

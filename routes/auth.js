@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+// MIDDLEWARE
+
+
 /* GET users listing. */
 router.post('/', function (req, res, next) {
     const { username, password } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     if (username === 'tungnt@softech.vn' && password === '123456789') {
         res.json({
             user: {
