@@ -5,6 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 
+var passport = require('passport');
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/auth');
@@ -18,6 +22,23 @@ app.set('view engine', 'jade');
 
 // Middleware
 app.use(cors());
+
+// JWT config
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'ADB57C459465E3ED43C6C6231E3C2';
+opts.issuer = 'softech.cloud';
+opts.audience = 'softech.cloud';
+
+passport.use(
+    new JwtStrategy(opts, (payload, done) => {
+        if (payload.sub === 'bhuynhcongkhoa@gmail.com') {
+            return done(null, true);
+        } else {
+            return done(null, false);
+        }
+    }),
+);
 
 app.use(logger('dev'));
 app.use(express.json());
