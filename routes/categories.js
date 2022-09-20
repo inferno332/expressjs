@@ -1,8 +1,19 @@
 const { json } = require('express');
 var express = require('express');
 const fs = require('fs');
-const { insertDocument, insertDocuments } = require('../mongodb/method');
 var router = express.Router();
+var yup = require('yup')
+const {
+    insertDocument,
+    insertDocuments,
+    updateDocumentByID,
+    deleteDocument,
+    deleteDocuments,
+    findDocument,
+    findDocuments,
+} = require('../mongodb/method');
+
+const { validateSchema } = require('./schemas.yup');
 
 /* GET users listing. */
 router.get('/', function (req, res) {
@@ -24,8 +35,7 @@ router.post('/insert', (req, res) => {
 });
 
 router.post('/inserts', (req, res) => {
-    data = req.body;
-    console.log(data);
+    const data = req.body;
     insertDocuments(data, 'categories')
         .then((result) => {
             res.status(200).json({ status: 'success', result });
@@ -34,6 +44,58 @@ router.post('/inserts', (req, res) => {
             res.status(500).json({ status: 'Failed!', err });
         });
 });
+
+router.patch('/update/:id', (req, res) => {
+    const data = req.body;
+    const { id } = req.params;
+    updateDocumentByID(id, data, 'categories')
+        .then((result) => {
+            res.status(200).json({ status: 'ok', result, data });
+        })
+        .catch((err) => {
+            res.status(500).json({ status: 'Failed!', err });
+        });
+});
+
+router.get(
+    '/search/name',
+    validateSchema(
+        yup.object({
+            query: yup.object({
+                name: yup.string().required(),
+            }),
+        }),
+    ),
+    function (req, res, next) {
+        const { name } = req.query;
+
+        // QUERY
+        // const query = { name: text };
+        const query = { name: new RegExp(`^${name}`) };
+
+        // SORT
+        const sort = { name: -1 };
+
+        //LIMIT
+        const limit = 10;
+
+        //SKIP
+        const skip = 0;
+
+        // PROJECTION: which fields you need
+        const projection = { name: 1 };
+
+        findDocuments(query, 'categories', sort, limit, [], skip, projection)
+            .then((result) => {
+                res.json(result);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json({status:'failed!'});
+            });
+    },
+);
+
 // // GET WITH PARAMS
 // router.get('/:id', (req, res) => {
 //     const id = Number(req.params.id);
