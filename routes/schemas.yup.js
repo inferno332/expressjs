@@ -36,9 +36,17 @@ const productSchema = yup.object({
     }),
 });
 
+const supplierSchema = yup.object({
+    body: yup.object({
+      name: yup.string().required(),
+      phone: yup.string().required(),
+    }),
+  });
+
 module.exports = {
     validateSchema,
     productSchema,
     loginSchema,
     registerSchema,
+    supplierSchema
 };

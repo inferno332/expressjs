@@ -1,7 +1,7 @@
 const { json } = require('express');
 var express = require('express');
-const fs = require('fs');
 var router = express.Router();
+const fs = require('fs');
 var yup = require('yup')
 const {
     insertDocument,
@@ -24,7 +24,6 @@ router.get('/', function (req, res) {
     }
 });
 router.post('/insert', (req, res) => {
-    console.log(data);
     insertDocument(data, 'categories')
         .then((result) => {
             res.status(200).json({ status: 'success', result });
